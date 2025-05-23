@@ -3,241 +3,1028 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Custom Language Compiler</title>
+    <title>Custom Language Compiler - Professional IDE</title>
     <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
       body {
-        font-family: Arial, sans-serif;
-        max-width: 1000px;
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        background: #0d1117;
+        color: #e6edf3;
+        overflow-x: hidden;
+        min-height: 100vh;
+      }
+
+      /* Animated background */
+      .background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #21262d 100%);
+      }
+
+      .background::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+          radial-gradient(circle at 20% 50%, rgba(56, 189, 248, 0.1) 0%, transparent 50%),
+          radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+          radial-gradient(circle at 40% 80%, rgba(34, 197, 94, 0.05) 0%, transparent 50%);
+        animation: backgroundPulse 8s ease-in-out infinite;
+      }
+
+      @keyframes backgroundPulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.8; }
+      }
+
+      /* Header */
+      .header {
+        background: rgba(22, 27, 34, 0.95);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid #30363d;
+        padding: 1rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        animation: slideDown 0.8s ease-out;
+      }
+
+      @keyframes slideDown {
+        from { transform: translateY(-100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+
+      .header-content {
+        max-width: 1400px;
         margin: 0 auto;
-        padding: 20px;
-        background-color: #f5f5f5;
-      }
-      .language-info {
-        background-color: #e7f3fe;
-        border-left: 6px solid #2196f3;
-        margin-bottom: 20px;
-        padding: 10px;
-      }
-      h1 {
-        color: #333;
-        text-align: center;
-      }
-      .container {
+        padding: 0 2rem;
         display: flex;
-        flex-direction: column;
-        gap: 20px;
+        justify-content: space-between;
+        align-items: center;
       }
-      .editor-container {
+
+      .logo {
         display: flex;
-        gap: 20px;
-        height: 500px;
+        align-items: center;
+        gap: 1rem;
       }
-      .panel {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        background: white;
+
+      .logo-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
         border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        padding: 15px;
-      }
-      .panel h2 {
-        margin-top: 0;
-        margin-bottom: 10px;
-        color: #444;
-      }
-      textarea {
-        flex: 1;
-        resize: none;
-        padding: 10px;
-        font-family: monospace;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 14px;
-      }
-      .controls {
         display: flex;
-        justify-content: flex-end;
-        margin-top: 10px;
-      }
-      .compile-btn {
-        background-color: #4caf50;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.2rem;
         color: white;
+        animation: logoSpin 4s ease-in-out infinite;
+      }
+
+      @keyframes logoSpin {
+        0%, 100% { transform: rotate(0deg) scale(1); }
+        50% { transform: rotate(5deg) scale(1.05); }
+      }
+
+      .logo h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .logo p {
+        color: #7d8590;
+        font-size: 0.9rem;
+        margin-top: 0.2rem;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+      }
+
+      .status-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: rgba(34, 197, 94, 0.1);
+        border: 1px solid rgba(34, 197, 94, 0.3);
+        border-radius: 20px;
+        font-size: 0.85rem;
+        color: #22c55e;
+      }
+
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        background: #22c55e;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.7; transform: scale(1.2); }
+      }
+
+      /* Main container */
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+        animation: fadeInUp 1s ease-out 0.3s both;
+      }
+
+      @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      /* Toolbar */
+      .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background: rgba(22, 27, 34, 0.6);
+        backdrop-filter: blur(10px);
+        border: 1px solid #30363d;
+        border-radius: 12px;
+        animation: slideIn 0.8s ease-out 0.5s both;
+      }
+
+      @keyframes slideIn {
+        from { opacity: 0; transform: translateX(-30px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+
+      .toolbar-left {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+      }
+
+      .btn {
+        padding: 0.6rem 1.2rem;
         border: none;
-        padding: 10px 20px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 16px;
-        border-radius: 4px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 500;
         cursor: pointer;
-        transition: background-color 0.3s;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        position: relative;
+        overflow: hidden;
       }
-      .compile-btn:hover {
-        background-color: #45a049;
+
+      .btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+        transition: left 0.5s;
       }
+
+      .btn:hover::before {
+        left: 100%;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        color: white;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+      }
+
+      .btn-secondary {
+        background: rgba(107, 114, 128, 0.1);
+        color: #e5e7eb;
+        border: 1px solid #374151;
+      }
+
+      .btn-secondary:hover {
+        background: rgba(107, 114, 128, 0.2);
+        transform: translateY(-2px);
+      }
+
+      .btn-success {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        color: white;
+        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+      }
+
+      .btn-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(34, 197, 94, 0.4);
+      }
+
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+
+      /* Loading spinner */
+      .spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255,255,255,0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s linear infinite;
+        display: none;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      /* Main grid */
+      .main-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .panel {
+        background: rgba(22, 27, 34, 0.8);
+        backdrop-filter: blur(20px);
+        border: 1px solid #30363d;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        animation: scaleIn 0.6s ease-out;
+      }
+
+      @keyframes scaleIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+      }
+
+      .panel:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        border-color: #58a6ff;
+      }
+
+      .panel-header {
+        padding: 1rem 1.5rem;
+        background: rgba(33, 38, 45, 0.8);
+        border-bottom: 1px solid #30363d;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .panel-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        color: #f0f6fc;
+      }
+
+      .panel-icon {
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+      }
+
+      .icon-code {
+        background: linear-gradient(135deg, #3b82f6, #1e40af);
+        color: white;
+      }
+
+      .icon-play {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        color: white;
+      }
+
+      .icon-cpu {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+      }
+
+      .panel-content {
+        padding: 1.5rem;
+        height: 500px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Code editor */
+      .code-editor {
+        flex: 1;
+        font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+        font-size: 14px;
+        line-height: 1.6;
+        background: #0d1117;
+        color: #e6edf3;
+        border: 1px solid #30363d;
+        border-radius: 8px;
+        padding: 1rem;
+        resize: none;
+        outline: none;
+        transition: all 0.3s ease;
+      }
+
+      .code-editor:focus {
+        border-color: #58a6ff;
+        box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
+      }
+
+      /* Output panels */
       .output-container {
         display: flex;
         flex-direction: column;
-        gap: 20px;
+        gap: 1.5rem;
       }
-      .result,
-      .bytecode,
-      .error {
-        padding: 15px;
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+      .output-panel {
+        background: rgba(22, 27, 34, 0.8);
+        border: 1px solid #30363d;
+        border-radius: 12px;
+        overflow: hidden;
+        flex: 1;
+        animation: slideInRight 0.8s ease-out;
       }
-      .error {
-        color: #d8000c;
-        background-color: #ffd2d2;
-        display: none;
+
+      @keyframes slideInRight {
+        from { opacity: 0; transform: translateX(30px); }
+        to { opacity: 1; transform: translateX(0); }
       }
-      pre {
-        margin: 0;
-        white-space: pre-wrap;
-        font-family: monospace;
+
+      .output-content {
+        padding: 1.5rem;
+        font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
         font-size: 14px;
+        line-height: 1.5;
+        background: #0d1117;
+        min-height: 200px;
+        white-space: pre-wrap;
+        overflow-y: auto;
+      }
+
+      .result-output {
+        color: #22c55e;
+      }
+
+      .bytecode-output {
+        color: #f59e0b;
+      }
+
+      /* Rules modal */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(10px);
+        z-index: 1000;
+        display: none;
+        animation: fadeIn 0.3s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      .modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #161b22;
+        border: 1px solid #30363d;
+        border-radius: 16px;
+        max-width: 800px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        z-index: 1001;
+        animation: modalSlide 0.4s ease-out;
+      }
+
+      @keyframes modalSlide {
+        from { opacity: 0; transform: translate(-50%, -60%); }
+        to { opacity: 1; transform: translate(-50%, -50%); }
+      }
+
+      .modal-header {
+        padding: 2rem 2rem 1rem;
+        border-bottom: 1px solid #30363d;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .modal-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #f0f6fc;
+      }
+
+      .close-btn {
+        background: rgba(248, 113, 113, 0.1);
+        color: #f87171;
+        border: none;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+      }
+
+      .close-btn:hover {
+        background: rgba(248, 113, 113, 0.2);
+        transform: scale(1.1);
+      }
+
+      .modal-body {
+        padding: 2rem;
+      }
+
+      .rules-section {
+        margin-bottom: 2rem;
+      }
+
+      .rules-section h3 {
+        color: #58a6ff;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .rules-list {
+        list-style: none;
+        margin-bottom: 1.5rem;
+      }
+
+      .rules-list li {
+        padding: 0.5rem 0;
+        padding-left: 1.5rem;
+        position: relative;
+        color: #e6edf3;
+      }
+
+      .rules-list li::before {
+        content: '▶';
+        position: absolute;
+        left: 0;
+        color: #22c55e;
+        font-size: 0.8rem;
+      }
+
+      .code-example {
+        background: #0d1117;
+        border: 1px solid #30363d;
+        border-radius: 8px;
+        padding: 1rem;
+        font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+        font-size: 14px;
+        margin: 1rem 0;
+        overflow-x: auto;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.25rem 0.75rem;
+        background: rgba(59, 130, 246, 0.1);
+        color: #58a6ff;
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+      }
+
+      /* Error panel */
+      .error-panel {
+        background: rgba(248, 113, 113, 0.1);
+        border: 1px solid rgba(248, 113, 113, 0.3);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-top: 1rem;
+        display: none;
+        animation: shake 0.5s ease-in-out;
+      }
+
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+      }
+
+      .error-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #f87171;
+        font-weight: 600;
+        margin-bottom: 1rem;
+      }
+
+      .error-content {
+        font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+        font-size: 14px;
+        color: #fca5a5;
+        background: rgba(0, 0, 0, 0.2);
+        padding: 1rem;
+        border-radius: 8px;
+        white-space: pre-wrap;
+      }
+
+      /* Responsive design */
+      @media (max-width: 768px) {
+        .container {
+          padding: 1rem;
+        }
+
+        .main-grid {
+          grid-template-columns: 1fr;
+          gap: 1.5rem;
+        }
+
+        .toolbar {
+          flex-direction: column;
+          gap: 1rem;
+          align-items: stretch;
+        }
+
+        .toolbar-left {
+          justify-content: space-between;
+        }
+
+        .panel-content {
+          height: 300px;
+        }
+
+        .modal {
+          width: 95%;
+          margin: 1rem;
+        }
+
+        .modal-body {
+          padding: 1rem;
+        }
+      }
+
+      /* Syntax highlighting hints */
+      .code-editor::placeholder {
+        color: #6b7280;
+        font-style: italic;
+      }
+
+      /* Keyboard shortcut indicator */
+      .shortcut-hint {
+        font-size: 0.8rem;
+        color: #6b7280;
+        background: rgba(107, 114, 128, 0.1);
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        border: 1px solid #374151;
       }
     </style>
   </head>
   <body>
-    <h1>Custom Language Compiler</h1>
-
-    <div class="language-info">
-      <h3>Language Syntax Guide</h3>
-      <p>This compiler uses a custom language with the following features:</p>
-      <ul>
-        <li>
-          <strong>Variable declarations:</strong> Use <code>int</code> or
-          <code>float</code> types (e.g., <code>int x = 5;</code>)
-        </li>
-        <li>
-          <strong>Arithmetic operations:</strong> +, -, *, / (e.g.,
-          <code>x + y</code>)
-        </li>
-        <li>
-          <strong>Variable assignments:</strong>
-          <code>int result = x + y;</code>
-        </li>
-        <li>
-          <strong>Output:</strong> The last expression's value will be returned
-          as the result
-        </li>
-        <li><strong>Semicolons:</strong> Required after each statement</li>
-        <li>
-          <strong>Comments:</strong> Use <code>//</code> for single-line
-          comments
-        </li>
-      </ul>
-      <p>Examples of valid code:</p>
-      <pre>
-int x = 10;
-int result = x * 2;
-result;</pre
-      >
-      <p>
-        Note: This compiler does not support C++, Java, Python, or other common
-        programming languages.
-      </p>
-    </div>
+    <div class="background"></div>
+    
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <div class="logo">
+          <div class="logo-icon">⚡</div>
+          <div>
+            <h1>Custom Language Compiler</h1>
+            <p>Professional IDE Environment</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <div class="status-badge">
+            <div class="status-dot"></div>
+            Server Ready
+          </div>
+        </div>
+      </div>
+    </header>
 
     <div class="container">
-      <div class="editor-container">
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <button class="btn btn-primary" id="compile-btn">
+            <div class="spinner" id="spinner"></div>
+            <span>⚡ Compile & Run</span>
+          </button>
+          <button class="btn btn-secondary" id="rules-btn">
+            📚 Language Guide
+          </button>
+          <button class="btn btn-secondary" id="examples-btn">
+            💡 Examples
+          </button>
+        </div>
+        <div class="shortcut-hint">
+          Press Ctrl+Enter (⌘+Enter) to compile
+        </div>
+      </div>
+
+      <!-- Main Grid -->
+      <div class="main-grid">
+        <!-- Code Editor Panel -->
         <div class="panel">
-          <h2>Source Code</h2>
-          <textarea id="source-code" placeholder="Enter your code here...">
-    // This is the custom language syntax
-    // For simple calculations
+          <div class="panel-header">
+            <div class="panel-title">
+              <div class="panel-icon icon-code">{ }</div>
+              Source Code Editor
+            </div>
+            <div class="badge">Custom Language</div>
+          </div>
+          <div class="panel-content">
+            <textarea 
+              id="source-code" 
+              class="code-editor" 
+              placeholder="// Welcome to the Custom Language Compiler!
+// Write your code here...
 
-    // Variable declarations
-    int x = 5;
-    int y = 10;
+int x = 5;
+int y = 10;
+int result = x + y;
+result;">// Custom Language Compiler
+// Professional IDE Environment
 
-    // Store the result in another variable
-    int result = x + y;
+// Variable declarations
+int x = 15;
+int y = 25;
 
-    // The last expression's value will be shown in the output
-    result;
-    </textarea
-          >
-          <div class="controls">
-            <button id="compile-btn" class="compile-btn">Compile & Run</button>
+// Arithmetic operations
+int sum = x + y;
+int product = x * y;
+int difference = y - x;
+
+// The result of the last expression
+sum;</textarea>
+          </div>
+        </div>
+
+        <!-- Output Panel -->
+        <div class="output-container">
+          <div class="output-panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <div class="panel-icon icon-play">▶</div>
+                Execution Result
+              </div>
+              <div class="badge">Output</div>
+            </div>
+            <div class="output-content result-output" id="result-output">
+Ready to compile...
+Click "Compile & Run" or press Ctrl+Enter to execute your code.
+            </div>
+          </div>
+
+          <div class="output-panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <div class="panel-icon icon-cpu">⚙</div>
+                Generated Bytecode
+              </div>
+              <div class="badge">Assembly</div>
+            </div>
+            <div class="output-content bytecode-output" id="bytecode-output">
+Bytecode will be generated after compilation...
+
+The virtual machine instructions will appear here,
+showing how your code is translated and executed.
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="output-container">
-        <div class="result">
-          <h2>Result</h2>
-          <pre id="result-output">
-Output will appear here after compilation.</pre
-          >
+      <!-- Error Panel -->
+      <div class="error-panel" id="error-panel">
+        <div class="error-header">
+          ⚠️ Compilation Error
         </div>
+        <div class="error-content" id="error-content"></div>
+      </div>
+    </div>
 
-        <div class="bytecode">
-          <h2>Generated Bytecode</h2>
-          <pre id="bytecode-output">
-Bytecode will appear here after compilation.</pre
-          >
+    <!-- Rules Modal -->
+    <div class="modal-overlay" id="modal-overlay">
+      <div class="modal" id="rules-modal">
+        <div class="modal-header">
+          <h2 class="modal-title">📚 Custom Language Guide</h2>
+          <button class="close-btn" id="close-modal">✕</button>
         </div>
+        <div class="modal-body">
+          <div class="rules-section">
+            <h3>🔤 Data Types</h3>
+            <ul class="rules-list">
+              <li><strong>int</strong> - Integer values (e.g., 5, -10, 100)</li>
+              <li><strong>float</strong> - Floating-point values (e.g., 3.14, -2.5)</li>
+            </ul>
+          </div>
 
-        <div class="error" id="error-container">
-          <h2>Error</h2>
-          <pre id="error-output"></pre>
+          <div class="rules-section">
+            <h3>📝 Variable Declaration</h3>
+            <div class="code-example">int x = 5;
+float pi = 3.14159;
+int result = x * 2;</div>
+          </div>
+
+          <div class="rules-section">
+            <h3>🧮 Arithmetic Operations</h3>
+            <ul class="rules-list">
+              <li><strong>Addition:</strong> x + y</li>
+              <li><strong>Subtraction:</strong> x - y</li>
+              <li><strong>Multiplication:</strong> x * y</li>
+              <li><strong>Division:</strong> x / y (integer division for int types)</li>
+            </ul>
+            <div class="code-example">int a = 10;
+int b = 3;
+int sum = a + b;        // 13
+int difference = a - b;  // 7
+int product = a * b;     // 30
+int quotient = a / b;    // 3 (integer division)</div>
+          </div>
+
+          <div class="rules-section">
+            <h3>📤 Output</h3>
+            <ul class="rules-list">
+              <li>The last expression in your code becomes the output</li>
+              <li>No explicit print statement needed</li>
+            </ul>
+            <div class="code-example">int x = 5;
+int y = 10;
+x + y;  // Output: 15</div>
+          </div>
+
+          <div class="rules-section">
+            <h3>💬 Comments & Syntax</h3>
+            <ul class="rules-list">
+              <li>Single-line comments: <code>// This is a comment</code></li>
+              <li>All statements must end with semicolon <code>;</code></li>
+              <li>Variables must be declared before use</li>
+            </ul>
+          </div>
+
+          <div class="rules-section">
+            <h3>❌ Not Supported</h3>
+            <ul class="rules-list">
+              <li>C++ syntax (#include, using namespace, main())</li>
+              <li>Standard library functions from other languages</li>
+              <li>Class definitions or object-oriented features</li>
+              <li>Control structures (if, while, for)</li>
+              <li>Function definitions</li>
+            </ul>
+          </div>
+
+          <div class="rules-section">
+            <h3>✨ Complete Example</h3>
+            <div class="code-example">// Calculate area of rectangle
+int length = 12;
+int width = 8;
+int area = length * width;
+
+// Calculate perimeter
+int perimeter = 2 * (length + width);
+
+// Output the area
+area;</div>
+          </div>
         </div>
       </div>
     </div>
+
     <script>
-      document
-        .getElementById("compile-btn")
-        .addEventListener("click", async () => {
-          const sourceCode = document.getElementById("source-code").value;
-          const language = "custom"; // Hardcoded to use a single language
-          const resultOutput = document.getElementById("result-output");
-          const bytecodeOutput = document.getElementById("bytecode-output");
-          const errorContainer = document.getElementById("error-container");
-          const errorOutput = document.getElementById("error-output");
+      // DOM elements
+      const compileBtn = document.getElementById('compile-btn');
+      const rulesBtn = document.getElementById('rules-btn');
+      const examplesBtn = document.getElementById('examples-btn');
+      const sourceCode = document.getElementById('source-code');
+      const resultOutput = document.getElementById('result-output');
+      const bytecodeOutput = document.getElementById('bytecode-output');
+      const errorPanel = document.getElementById('error-panel');
+      const errorContent = document.getElementById('error-content');
+      const spinner = document.getElementById('spinner');
+      const modalOverlay = document.getElementById('modal-overlay');
+      const closeModal = document.getElementById('close-modal');
 
-          // Reset outputs
-          resultOutput.textContent = "Compiling...";
-          bytecodeOutput.textContent = "Compiling...";
-          errorContainer.style.display = "none";
+      // Example codes
+      const examples = [
+        {
+          name: "Basic Arithmetic",
+          code: `// Basic arithmetic operations
+int a = 15;
+int b = 4;
 
-          try {
-            const response = await fetch("http://127.0.0.1:8080/compile", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                source: sourceCode,
-                language: language,
-              }),
-            });
+int sum = a + b;        // 19
+int difference = a - b; // 11
+int product = a * b;    // 60
+int quotient = a / b;   // 3
 
-            const data = await response.json();
+sum;`
+        },
+        {
+          name: "Complex Expression",
+          code: `// Complex mathematical expression
+int x = 8;
+int y = 3;
+int z = 2;
 
-            if (data.error) {
-              errorContainer.style.display = "block";
-              errorOutput.textContent = data.error;
-              resultOutput.textContent = "Execution failed. See error above.";
-              bytecodeOutput.textContent =
-                "No bytecode generated due to error.";
-            } else {
-              resultOutput.textContent = data.result || "No output";
-              bytecodeOutput.textContent =
-                data.bytecode.join("\n") || "No bytecode generated";
-            }
-          } catch (error) {
-            errorContainer.style.display = "block";
-            errorOutput.textContent = `Failed to connect to compiler server: ${error.message}`;
-            resultOutput.textContent =
-              "Connection error. Is the server running?";
-            bytecodeOutput.textContent = "No bytecode available.";
+int result = (x + y) * z - x / y;
+result;`
+        },
+        {
+          name: "Float Operations",
+          code: `// Working with floating-point numbers
+float pi = 3.14159;
+float radius = 5.0;
+
+float area = pi * radius * radius;
+area;`
+        },
+        {
+          name: "Multiple Variables",
+          code: `// Multiple variable calculations
+int base = 10;
+int height = 15;
+int triangleArea = base * height / 2;
+
+int rectangleLength = 12;
+int rectangleWidth = 8;
+int rectangleArea = rectangleLength * rectangleWidth;
+
+triangleArea + rectangleArea;`
+        }
+      ];
+
+      let currentExampleIndex = 0;
+
+      // Compile function
+      async function compile() {
+        const code = sourceCode.value.trim();
+        
+        if (!code) {
+          showError("Please enter some code to compile.");
+          return;
+        }
+
+        // Set loading state
+        setLoadingState(true);
+        hideError();
+        
+        resultOutput.textContent = "🔄 Compiling your code...";
+        bytecodeOutput.textContent = "⚙️  Generating bytecode...";
+
+        try {
+          const response = await fetch("http://127.0.0.1:8080/compile", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              source: code,
+              language: "custom",
+            }),
+          });
+
+          const data = await response.json();
+
+          if (data.error) {
+            showError(data.error);
+            resultOutput.textContent = "❌ Compilation failed. Check the error below.";
+            bytecodeOutput.textContent = "❌ No bytecode generated due to compilation error.";
+          } else {
+            resultOutput.textContent = `✅ Result: ${data.result || "No output"}`;
+            bytecodeOutput.textContent = data.bytecode?.join("\n") || "No bytecode generated";
+            
+            // Add success animation
+            resultOutput.style.animation = 'none';
+            resultOutput.offsetHeight; // Trigger reflow
+            resultOutput.style.animation = 'fadeIn 0.5s ease-out';
           }
-        });
+        } catch (error) {
+          showError(`Connection error: ${error.message}\n\nPlease ensure the compiler server is running on http://127.0.0.1:8080`);
+          resultOutput.textContent = "❌ Failed to connect to compiler server.";
+          bytecodeOutput.textContent = "❌ Server connection unavailable.";
+        } finally {
+          setLoadingState(false);
+        }
+      }      function setLoadingState(loading) {
+        if (loading) {
+          compileBtn.disabled = true;
+          spinner.style.display = 'inline-block';
+          compileBtn.querySelector('span').textContent = '⏳ Compiling...';
+        } else {
+          compileBtn.disabled = false;
+          spinner.style.display = 'none';
+          compileBtn.querySelector('span').textContent = '⚡ Compile & Run';
+        }
+      }
+
+      function showError(message) {
+        errorPanel.style.display = 'block';
+        errorContent.textContent = message;
+        
+        // Add shake animation
+        errorPanel.style.animation = 'none';
+        errorPanel.offsetHeight; // Trigger reflow
+        errorPanel.style.animation = 'shake 0.5s ease-in-out';
+      }
+
+      function hideError() {
+        errorPanel.style.display = 'none';
+      }
+
+      // Load an example into the editor
+      function loadExample() {
+        const example = examples[currentExampleIndex];
+        sourceCode.value = example.code;
+        
+        // Increment for next example
+        currentExampleIndex = (currentExampleIndex + 1) % examples.length;
+      }
+
+      // Toggle rules modal
+      function toggleModal(show) {
+        modalOverlay.style.display = show ? 'block' : 'none';
+      }
+
+      // Event listeners
+      compileBtn.addEventListener('click', compile);
+      
+      rulesBtn.addEventListener('click', () => {
+        toggleModal(true);
+      });
+      
+      closeModal.addEventListener('click', () => {
+        toggleModal(false);
+      });
+      
+      examplesBtn.addEventListener('click', () => {
+        loadExample();
+      });
+      
+      // Add keyboard shortcut for compilation
+      document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+          e.preventDefault();
+          compile();
+        }
+      });
+      
+      // Close modal when clicking outside
+      modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) {
+          toggleModal(false);
+        }
+      });
+      
+      // Initialize with focus in the editor
+      sourceCode.focus();
     </script>
   </body>
 </html>
