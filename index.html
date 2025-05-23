@@ -12,7 +12,7 @@
       }
 
       body {
-        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
         background: #0d1117;
         color: #e6edf3;
         overflow-x: hidden;
@@ -27,26 +27,47 @@
         width: 100%;
         height: 100%;
         z-index: -1;
-        background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #21262d 100%);
+        background: linear-gradient(
+          135deg,
+          #0d1117 0%,
+          #161b22 50%,
+          #21262d 100%
+        );
       }
 
       .background::before {
-        content: '';
+        content: "";
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: 
-          radial-gradient(circle at 20% 50%, rgba(56, 189, 248, 0.1) 0%, transparent 50%),
-          radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
-          radial-gradient(circle at 40% 80%, rgba(34, 197, 94, 0.05) 0%, transparent 50%);
+        background: radial-gradient(
+            circle at 20% 50%,
+            rgba(56, 189, 248, 0.1) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 80% 20%,
+            rgba(139, 92, 246, 0.1) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 40% 80%,
+            rgba(34, 197, 94, 0.05) 0%,
+            transparent 50%
+          );
         animation: backgroundPulse 8s ease-in-out infinite;
       }
 
       @keyframes backgroundPulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.8; }
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.8;
+        }
       }
 
       /* Header */
@@ -62,8 +83,14 @@
       }
 
       @keyframes slideDown {
-        from { transform: translateY(-100%); opacity: 0; }
-        to { transform: translateY(0); opacity: 1; }
+        from {
+          transform: translateY(-100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
       }
 
       .header-content {
@@ -96,8 +123,13 @@
       }
 
       @keyframes logoSpin {
-        0%, 100% { transform: rotate(0deg) scale(1); }
-        50% { transform: rotate(5deg) scale(1.05); }
+        0%,
+        100% {
+          transform: rotate(0deg) scale(1);
+        }
+        50% {
+          transform: rotate(5deg) scale(1.05);
+        }
       }
 
       .logo h1 {
@@ -142,8 +174,15 @@
       }
 
       @keyframes pulse {
-        0%, 100% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.7; transform: scale(1.2); }
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.7;
+          transform: scale(1.2);
+        }
       }
 
       /* Main container */
@@ -155,8 +194,14 @@
       }
 
       @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(30px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
       /* Toolbar */
@@ -174,8 +219,14 @@
       }
 
       @keyframes slideIn {
-        from { opacity: 0; transform: translateX(-30px); }
-        to { opacity: 1; transform: translateX(0); }
+        from {
+          opacity: 0;
+          transform: translateX(-30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
       }
 
       .toolbar-left {
@@ -200,13 +251,18 @@
       }
 
       .btn::before {
-        content: '';
+        content: "";
         position: absolute;
         top: 0;
         left: -100%;
         width: 100%;
         height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.1),
+          transparent
+        );
         transition: left 0.5s;
       }
 
@@ -257,7 +313,7 @@
       .spinner {
         width: 16px;
         height: 16px;
-        border: 2px solid rgba(255,255,255,0.3);
+        border: 2px solid rgba(255, 255, 255, 0.3);
         border-radius: 50%;
         border-top-color: white;
         animation: spin 1s linear infinite;
@@ -265,7 +321,9 @@
       }
 
       @keyframes spin {
-        to { transform: rotate(360deg); }
+        to {
+          transform: rotate(360deg);
+        }
       }
 
       /* Main grid */
@@ -287,13 +345,19 @@
       }
 
       @keyframes scaleIn {
-        from { opacity: 0; transform: scale(0.95); }
-        to { opacity: 1; transform: scale(1); }
+        from {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
       }
 
       .panel:hover {
         transform: translateY(-4px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         border-color: #58a6ff;
       }
 
@@ -348,7 +412,7 @@
       /* Code editor */
       .code-editor {
         flex: 1;
-        font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+        font-family: "SF Mono", Monaco, "Cascadia Code", monospace;
         font-size: 14px;
         line-height: 1.6;
         background: #0d1117;
@@ -383,13 +447,19 @@
       }
 
       @keyframes slideInRight {
-        from { opacity: 0; transform: translateX(30px); }
-        to { opacity: 1; transform: translateX(0); }
+        from {
+          opacity: 0;
+          transform: translateX(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
       }
 
       .output-content {
         padding: 1.5rem;
-        font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+        font-family: "SF Mono", Monaco, "Cascadia Code", monospace;
         font-size: 14px;
         line-height: 1.5;
         background: #0d1117;
@@ -421,8 +491,12 @@
       }
 
       @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
       }
 
       .modal {
@@ -442,8 +516,14 @@
       }
 
       @keyframes modalSlide {
-        from { opacity: 0; transform: translate(-50%, -60%); }
-        to { opacity: 1; transform: translate(-50%, -50%); }
+        from {
+          opacity: 0;
+          transform: translate(-50%, -60%);
+        }
+        to {
+          opacity: 1;
+          transform: translate(-50%, -50%);
+        }
       }
 
       .modal-header {
@@ -509,7 +589,7 @@
       }
 
       .rules-list li::before {
-        content: '▶';
+        content: "▶";
         position: absolute;
         left: 0;
         color: #22c55e;
@@ -521,7 +601,7 @@
         border: 1px solid #30363d;
         border-radius: 8px;
         padding: 1rem;
-        font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+        font-family: "SF Mono", Monaco, "Cascadia Code", monospace;
         font-size: 14px;
         margin: 1rem 0;
         overflow-x: auto;
@@ -552,9 +632,16 @@
       }
 
       @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-5px); }
-        75% { transform: translateX(5px); }
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-5px);
+        }
+        75% {
+          transform: translateX(5px);
+        }
       }
 
       .error-header {
@@ -567,7 +654,7 @@
       }
 
       .error-content {
-        font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+        font-family: "SF Mono", Monaco, "Cascadia Code", monospace;
         font-size: 14px;
         color: #fca5a5;
         background: rgba(0, 0, 0, 0.2);
@@ -630,7 +717,7 @@
   </head>
   <body>
     <div class="background"></div>
-    
+
     <!-- Header -->
     <header class="header">
       <div class="header-content">
@@ -665,9 +752,7 @@
             💡 Examples
           </button>
         </div>
-        <div class="shortcut-hint">
-          Press Ctrl+Enter (⌘+Enter) to compile
-        </div>
+        <div class="shortcut-hint">Press Ctrl+Enter (⌘+Enter) to compile</div>
       </div>
 
       <!-- Main Grid -->
@@ -682,16 +767,18 @@
             <div class="badge">Custom Language</div>
           </div>
           <div class="panel-content">
-            <textarea 
-              id="source-code" 
-              class="code-editor" 
+            <textarea
+              id="source-code"
+              class="code-editor"
               placeholder="// Welcome to the Custom Language Compiler!
 // Write your code here...
 
 int x = 5;
 int y = 10;
 int result = x + y;
-result;">// Custom Language Compiler
+result;"
+            >
+// Custom Language Compiler
 // Professional IDE Environment
 
 // Variable declarations
@@ -704,7 +791,8 @@ int product = x * y;
 int difference = y - x;
 
 // The result of the last expression
-sum;</textarea>
+sum;</textarea
+            >
           </div>
         </div>
 
@@ -719,8 +807,8 @@ sum;</textarea>
               <div class="badge">Output</div>
             </div>
             <div class="output-content result-output" id="result-output">
-Ready to compile...
-Click "Compile & Run" or press Ctrl+Enter to execute your code.
+              Ready to compile... Click "Compile & Run" or press Ctrl+Enter to
+              execute your code.
             </div>
           </div>
 
@@ -733,10 +821,9 @@ Click "Compile & Run" or press Ctrl+Enter to execute your code.
               <div class="badge">Assembly</div>
             </div>
             <div class="output-content bytecode-output" id="bytecode-output">
-Bytecode will be generated after compilation...
-
-The virtual machine instructions will appear here,
-showing how your code is translated and executed.
+              Bytecode will be generated after compilation... The virtual
+              machine instructions will appear here, showing how your code is
+              translated and executed.
             </div>
           </div>
         </div>
@@ -744,9 +831,7 @@ showing how your code is translated and executed.
 
       <!-- Error Panel -->
       <div class="error-panel" id="error-panel">
-        <div class="error-header">
-          ⚠️ Compilation Error
-        </div>
+        <div class="error-header">⚠️ Compilation Error</div>
         <div class="error-content" id="error-content"></div>
       </div>
     </div>
@@ -763,15 +848,18 @@ showing how your code is translated and executed.
             <h3>🔤 Data Types</h3>
             <ul class="rules-list">
               <li><strong>int</strong> - Integer values (e.g., 5, -10, 100)</li>
-              <li><strong>float</strong> - Floating-point values (e.g., 3.14, -2.5)</li>
+              <li>
+                <strong>float</strong> - Floating-point values (e.g., 3.14,
+                -2.5)
+              </li>
             </ul>
           </div>
 
           <div class="rules-section">
             <h3>📝 Variable Declaration</h3>
-            <div class="code-example">int x = 5;
-float pi = 3.14159;
-int result = x * 2;</div>
+            <div class="code-example">
+              int x = 5; float pi = 3.14159; int result = x * 2;
+            </div>
           </div>
 
           <div class="rules-section">
@@ -780,14 +868,16 @@ int result = x * 2;</div>
               <li><strong>Addition:</strong> x + y</li>
               <li><strong>Subtraction:</strong> x - y</li>
               <li><strong>Multiplication:</strong> x * y</li>
-              <li><strong>Division:</strong> x / y (integer division for int types)</li>
+              <li>
+                <strong>Division:</strong> x / y (integer division for int
+                types)
+              </li>
             </ul>
-            <div class="code-example">int a = 10;
-int b = 3;
-int sum = a + b;        // 13
-int difference = a - b;  // 7
-int product = a * b;     // 30
-int quotient = a / b;    // 3 (integer division)</div>
+            <div class="code-example">
+              int a = 10; int b = 3; int sum = a + b; // 13 int difference = a -
+              b; // 7 int product = a * b; // 30 int quotient = a / b; // 3
+              (integer division)
+            </div>
           </div>
 
           <div class="rules-section">
@@ -796,9 +886,9 @@ int quotient = a / b;    // 3 (integer division)</div>
               <li>The last expression in your code becomes the output</li>
               <li>No explicit print statement needed</li>
             </ul>
-            <div class="code-example">int x = 5;
-int y = 10;
-x + y;  // Output: 15</div>
+            <div class="code-example">
+              int x = 5; int y = 10; x + y; // Output: 15
+            </div>
           </div>
 
           <div class="rules-section">
@@ -823,208 +913,16 @@ x + y;  // Output: 15</div>
 
           <div class="rules-section">
             <h3>✨ Complete Example</h3>
-            <div class="code-example">// Calculate area of rectangle
-int length = 12;
-int width = 8;
-int area = length * width;
-
-// Calculate perimeter
-int perimeter = 2 * (length + width);
-
-// Output the area
-area;</div>
+            <div class="code-example">
+              // Calculate area of rectangle int length = 12; int width = 8; int
+              area = length * width; // Calculate perimeter int perimeter = 2 *
+              (length + width); // Output the area area;
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <script>
-      // DOM elements
-      const compileBtn = document.getElementById('compile-btn');
-      const rulesBtn = document.getElementById('rules-btn');
-      const examplesBtn = document.getElementById('examples-btn');
-      const sourceCode = document.getElementById('source-code');
-      const resultOutput = document.getElementById('result-output');
-      const bytecodeOutput = document.getElementById('bytecode-output');
-      const errorPanel = document.getElementById('error-panel');
-      const errorContent = document.getElementById('error-content');
-      const spinner = document.getElementById('spinner');
-      const modalOverlay = document.getElementById('modal-overlay');
-      const closeModal = document.getElementById('close-modal');
-
-      // Example codes
-      const examples = [
-        {
-          name: "Basic Arithmetic",
-          code: `// Basic arithmetic operations
-int a = 15;
-int b = 4;
-
-int sum = a + b;        // 19
-int difference = a - b; // 11
-int product = a * b;    // 60
-int quotient = a / b;   // 3
-
-sum;`
-        },
-        {
-          name: "Complex Expression",
-          code: `// Complex mathematical expression
-int x = 8;
-int y = 3;
-int z = 2;
-
-int result = (x + y) * z - x / y;
-result;`
-        },
-        {
-          name: "Float Operations",
-          code: `// Working with floating-point numbers
-float pi = 3.14159;
-float radius = 5.0;
-
-float area = pi * radius * radius;
-area;`
-        },
-        {
-          name: "Multiple Variables",
-          code: `// Multiple variable calculations
-int base = 10;
-int height = 15;
-int triangleArea = base * height / 2;
-
-int rectangleLength = 12;
-int rectangleWidth = 8;
-int rectangleArea = rectangleLength * rectangleWidth;
-
-triangleArea + rectangleArea;`
-        }
-      ];
-
-      let currentExampleIndex = 0;
-
-      // Compile function
-      async function compile() {
-        const code = sourceCode.value.trim();
-        
-        if (!code) {
-          showError("Please enter some code to compile.");
-          return;
-        }
-
-        // Set loading state
-        setLoadingState(true);
-        hideError();
-        
-        resultOutput.textContent = "🔄 Compiling your code...";
-        bytecodeOutput.textContent = "⚙️  Generating bytecode...";
-
-        try {
-          const response = await fetch("http://127.0.0.1:8080/compile", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              source: code,
-              language: "custom",
-            }),
-          });
-
-          const data = await response.json();
-
-          if (data.error) {
-            showError(data.error);
-            resultOutput.textContent = "❌ Compilation failed. Check the error below.";
-            bytecodeOutput.textContent = "❌ No bytecode generated due to compilation error.";
-          } else {
-            resultOutput.textContent = `✅ Result: ${data.result || "No output"}`;
-            bytecodeOutput.textContent = data.bytecode?.join("\n") || "No bytecode generated";
-            
-            // Add success animation
-            resultOutput.style.animation = 'none';
-            resultOutput.offsetHeight; // Trigger reflow
-            resultOutput.style.animation = 'fadeIn 0.5s ease-out';
-          }
-        } catch (error) {
-          showError(`Connection error: ${error.message}\n\nPlease ensure the compiler server is running on http://127.0.0.1:8080`);
-          resultOutput.textContent = "❌ Failed to connect to compiler server.";
-          bytecodeOutput.textContent = "❌ Server connection unavailable.";
-        } finally {
-          setLoadingState(false);
-        }
-      }      function setLoadingState(loading) {
-        if (loading) {
-          compileBtn.disabled = true;
-          spinner.style.display = 'inline-block';
-          compileBtn.querySelector('span').textContent = '⏳ Compiling...';
-        } else {
-          compileBtn.disabled = false;
-          spinner.style.display = 'none';
-          compileBtn.querySelector('span').textContent = '⚡ Compile & Run';
-        }
-      }
-
-      function showError(message) {
-        errorPanel.style.display = 'block';
-        errorContent.textContent = message;
-        
-        // Add shake animation
-        errorPanel.style.animation = 'none';
-        errorPanel.offsetHeight; // Trigger reflow
-        errorPanel.style.animation = 'shake 0.5s ease-in-out';
-      }
-
-      function hideError() {
-        errorPanel.style.display = 'none';
-      }
-
-      // Load an example into the editor
-      function loadExample() {
-        const example = examples[currentExampleIndex];
-        sourceCode.value = example.code;
-        
-        // Increment for next example
-        currentExampleIndex = (currentExampleIndex + 1) % examples.length;
-      }
-
-      // Toggle rules modal
-      function toggleModal(show) {
-        modalOverlay.style.display = show ? 'block' : 'none';
-      }
-
-      // Event listeners
-      compileBtn.addEventListener('click', compile);
-      
-      rulesBtn.addEventListener('click', () => {
-        toggleModal(true);
-      });
-      
-      closeModal.addEventListener('click', () => {
-        toggleModal(false);
-      });
-      
-      examplesBtn.addEventListener('click', () => {
-        loadExample();
-      });
-      
-      // Add keyboard shortcut for compilation
-      document.addEventListener('keydown', (e) => {
-        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-          e.preventDefault();
-          compile();
-        }
-      });
-      
-      // Close modal when clicking outside
-      modalOverlay.addEventListener('click', (e) => {
-        if (e.target === modalOverlay) {
-          toggleModal(false);
-        }
-      });
-      
-      // Initialize with focus in the editor
-      sourceCode.focus();
-    </script>
+    <script src="script.js"></script>
   </body>
 </html>
