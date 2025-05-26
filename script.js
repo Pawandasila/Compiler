@@ -51,6 +51,8 @@ int difference = a - b; // 11
 int product = a * b;    // 60
 int quotient = a / b;   // 3
 
+// this is used to comment any line
+
 sum;`,
     },
     {
