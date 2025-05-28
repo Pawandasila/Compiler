@@ -1,6 +1,8 @@
 let editor; // CodeMirror instance
 let errorMarkers = [];
 
+
+//event listner
 document.addEventListener("DOMContentLoaded", function() {
   // Initialize CodeMirror
   editor = CodeMirror.fromTextArea(document.getElementById("source-code"), {
@@ -50,8 +52,6 @@ int sum = a + b;        // 19
 int difference = a - b; // 11
 int product = a * b;    // 60
 int quotient = a / b;   // 3
-
-// this is used to comment any line
 
 sum;`,
     },
@@ -142,10 +142,12 @@ triangleArea + rectangleArea;`,
     // Set loading state
     setLoadingState(true);
     hideError();
+    
 
     resultOutput.textContent = "🔄 Compiling your code...";
     bytecodeOutput.textContent = "⚙️ Generating bytecode...";
 
+    //error handling
     try {
       const response = await fetch("/compile", {
         method: "POST",
@@ -259,23 +261,23 @@ triangleArea + rectangleArea;`,
     }
   }
 
-  // Show error
+  
   function showError(message) {
     errorPanel.style.display = "block";
     errorContent.textContent = message;
+
     
-    // Scroll to error panel
     setTimeout(() => {
       errorPanel.scrollIntoView({ behavior: "smooth" });
     }, 100);
   }
 
-  // Hide error
+ 
   function hideError() {
     errorPanel.style.display = "none";
   }
 
-  // Set loading state
+  
   function setLoadingState(isLoading) {
     if (isLoading) {
       spinner.style.display = "block";
