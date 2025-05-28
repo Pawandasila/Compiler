@@ -2,20 +2,22 @@ use std::error::Error;
 use std::fmt;
 use crate::lexer::{Token, TokenType};
 
+/// Abstract Syntax Tree (AST) node definitions
 #[derive(Debug, Clone)]
 pub enum ASTNode {
-    Program(Vec<ASTNode>),
-      // Declarations
+    Program(Vec<ASTNode>), // Entry point, contains list of statements
+
+    // Variable declaration: type, name, optional initializer
     VarDeclaration {
         #[allow(dead_code)]
         var_type: String,
         name: String,
         initializer: Option<Box<ASTNode>>,
     },
-    
-    // Statements
-    Block(Vec<ASTNode>),
-    ExpressionStatement(Box<ASTNode>),
+
+    // Different types of statements
+    Block(Vec<ASTNode>), // Block of statements { ... }
+    ExpressionStatement(Box<ASTNode>), // Expression followed by semicolon
     IfStatement {
         condition: Box<ASTNode>,
         then_branch: Box<ASTNode>,
@@ -25,8 +27,8 @@ pub enum ASTNode {
         condition: Box<ASTNode>,
         body: Box<ASTNode>,
     },
-    ReturnStatement(Option<Box<ASTNode>>),
-    
+    ReturnStatement(Option<Box<ASTNode>>), // Optional return value
+
     // Expressions
     BinaryExpression {
         left: Box<ASTNode>,
@@ -45,7 +47,7 @@ pub enum ASTNode {
         name: String,
         value: Box<ASTNode>,
     },
-    
+
     // Literals
     IntLiteral(i64),
     FloatLiteral(f64),
@@ -53,6 +55,7 @@ pub enum ASTNode {
     Identifier(String),
 }
 
+/// Error type used for reporting parsing errors
 #[derive(Debug)]
 pub struct ParserError {
     message: String,
@@ -68,60 +71,55 @@ impl fmt::Display for ParserError {
 
 impl Error for ParserError {}
 
+/// Parser that takes a vector of tokens and produces an AST
 pub struct Parser {
-    tokens: Vec<Token>,
-    current: usize,
+    tokens: Vec<Token>, // All tokens from the lexer
+    current: usize,     // Current token index
 }
 
 impl Parser {
     pub fn new(tokens: Vec<Token>) -> Self {
-        Parser {
-            tokens,
-            current: 0,
-        }
+        Parser { tokens, current: 0 }
     }
-    
+
+    /// Parse a complete program
     pub fn parse(&mut self) -> Result<ASTNode, Box<dyn Error>> {
         let mut statements = Vec::new();
-        
         while !self.is_at_end() {
             statements.push(self.declaration()?);
         }
-        
         Ok(ASTNode::Program(statements))
     }
-    
+
+    /// Parses top-level declarations (e.g., variable declarations)
     fn declaration(&mut self) -> Result<ASTNode, Box<dyn Error>> {
         if self.match_token(&[TokenType::Int, TokenType::Float]) {
             return self.var_declaration();
         }
-        
         self.statement()
     }
-    
+
+    /// Parses a variable declaration (type name = initializer;)
     fn var_declaration(&mut self) -> Result<ASTNode, Box<dyn Error>> {
-        // Save the type token
         let var_type = match &self.previous().token_type {
             TokenType::Int => "int".to_string(),
             TokenType::Float => "float".to_string(),
             _ => unreachable!(),
         };
-        
-        // Expect an identifier
+
+        // Expect identifier
         if let TokenType::Identifier(name) = &self.current_token().token_type {
             let name = name.clone();
             self.advance();
-            
-            // Check for initializer
+
+            // Optional initializer
             let initializer = if self.match_token(&[TokenType::Assign]) {
                 Some(Box::new(self.expression()?))
             } else {
                 None
             };
-            
-            // Expect semicolon
+
             self.consume(TokenType::Semicolon, "Expected ';' after variable declaration")?;
-            
             Ok(ASTNode::VarDeclaration {
                 var_type,
                 name,
@@ -131,7 +129,8 @@ impl Parser {
             Err(self.error("Expected identifier"))
         }
     }
-    
+
+    /// Parses a statement
     fn statement(&mut self) -> Result<ASTNode, Box<dyn Error>> {
         if self.match_token(&[TokenType::If]) {
             self.if_statement()
@@ -145,78 +144,73 @@ impl Parser {
             self.expression_statement()
         }
     }
-    
+
+    /// Parses an if statement
     fn if_statement(&mut self) -> Result<ASTNode, Box<dyn Error>> {
         self.consume(TokenType::LeftParen, "Expected '(' after 'if'")?;
         let condition = self.expression()?;
         self.consume(TokenType::RightParen, "Expected ')' after if condition")?;
-        
         let then_branch = self.statement()?;
-        
         let else_branch = if self.match_token(&[TokenType::Else]) {
             Some(Box::new(self.statement()?))
         } else {
             None
         };
-        
         Ok(ASTNode::IfStatement {
             condition: Box::new(condition),
             then_branch: Box::new(then_branch),
             else_branch,
         })
     }
-    
+
+    /// Parses a while loop
     fn while_statement(&mut self) -> Result<ASTNode, Box<dyn Error>> {
         self.consume(TokenType::LeftParen, "Expected '(' after 'while'")?;
         let condition = self.expression()?;
         self.consume(TokenType::RightParen, "Expected ')' after while condition")?;
-        
         let body = self.statement()?;
-        
         Ok(ASTNode::WhileStatement {
             condition: Box::new(condition),
             body: Box::new(body),
         })
     }
-    
+
+    /// Parses a return statement
     fn return_statement(&mut self) -> Result<ASTNode, Box<dyn Error>> {
         let value = if !self.check(&TokenType::Semicolon) {
             Some(Box::new(self.expression()?))
         } else {
             None
         };
-        
         self.consume(TokenType::Semicolon, "Expected ';' after return value")?;
-        
         Ok(ASTNode::ReturnStatement(value))
     }
-    
+
+    /// Parses a block statement: `{ statement* }`
     fn block(&mut self) -> Result<ASTNode, Box<dyn Error>> {
         let mut statements = Vec::new();
-        
         while !self.check(&TokenType::RightBrace) && !self.is_at_end() {
             statements.push(self.declaration()?);
         }
-        
         self.consume(TokenType::RightBrace, "Expected '}' after block")?;
-        
         Ok(ASTNode::Block(statements))
     }
-    
+
+    /// Parses an expression statement
     fn expression_statement(&mut self) -> Result<ASTNode, Box<dyn Error>> {
         let expr = self.expression()?;
         self.consume(TokenType::Semicolon, "Expected ';' after expression")?;
-        
         Ok(ASTNode::ExpressionStatement(Box::new(expr)))
     }
-    
+
+    /// Entry point for expression parsing
     fn expression(&mut self) -> Result<ASTNode, Box<dyn Error>> {
         self.assignment()
     }
-    
+
+    /// Parses assignment expressions
     fn assignment(&mut self) -> Result<ASTNode, Box<dyn Error>> {
         let expr = self.equality()?;
-        
         if self.match_token(&[TokenType::Assign]) {
             if let ASTNode::Identifier(name) = expr {
                 let value = self.assignment()?;
@@ -225,16 +219,14 @@ impl Parser {
                     value: Box::new(value),
                 });
             }
-            
             return Err(self.error("Invalid assignment target"));
         }
-        
         Ok(expr)
     }
-    
+
+    /// Parses equality expressions (==, !=)
     fn equality(&mut self) -> Result<ASTNode, Box<dyn Error>> {
         let mut expr = self.comparison()?;
-        
         while self.match_token(&[TokenType::Equal, TokenType::NotEqual]) {
             let operator = self.previous().token_type.clone();
             let right = self.comparison()?;
@@ -244,13 +236,12 @@ impl Parser {
                 right: Box::new(right),
             };
         }
-        
         Ok(expr)
     }
-    
+
+    /// Parses comparison expressions (<, >)
     fn comparison(&mut self) -> Result<ASTNode, Box<dyn Error>> {
         let mut expr = self.term()?;
-        
         while self.match_token(&[TokenType::LessThan, TokenType::GreaterThan]) {
             let operator = self.previous().token_type.clone();
             let right = self.term()?;
@@ -260,13 +251,12 @@ impl Parser {
                 right: Box::new(right),
             };
         }
-        
         Ok(expr)
     }
-    
+
+    /// Parses addition and subtraction
     fn term(&mut self) -> Result<ASTNode, Box<dyn Error>> {
         let mut expr = self.factor()?;
-        
         while self.match_token(&[TokenType::Plus, TokenType::Minus]) {
             let operator = self.previous().token_type.clone();
             let right = self.factor()?;
@@ -276,13 +266,12 @@ impl Parser {
                 right: Box::new(right),
             };
         }
-        
         Ok(expr)
     }
-    
+
+    /// Parses multiplication and division
     fn factor(&mut self) -> Result<ASTNode, Box<dyn Error>> {
         let mut expr = self.unary()?;
-        
         while self.match_token(&[TokenType::Multiply, TokenType::Divide]) {
             let operator = self.previous().token_type.clone();
             let right = self.unary()?;
