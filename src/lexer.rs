@@ -1,6 +1,7 @@
 use std::error::Error;
 use std::fmt;
 
+/// Enum representing different types of tokens.
 #[derive(Debug, Clone, PartialEq)]
 pub enum TokenType {
     // Keywords
@@ -27,6 +28,7 @@ pub enum TokenType {
     EOF,
 }
 
+/// Struct representing a token, along with its line and column in the source.
 #[derive(Debug, Clone)]
 pub struct Token {
     pub token_type: TokenType,
@@ -34,6 +36,7 @@ pub struct Token {
     pub column: usize,
 }
 
+/// Custom error for the lexer.
 #[derive(Debug)]
 pub struct LexerError {
     message: String,
@@ -49,6 +52,7 @@ impl fmt::Display for LexerError {
 
 impl Error for LexerError {}
 
+/// Lexer struct that holds state while tokenizing input.
 pub struct Lexer {
     input: Vec<char>,
     position: usize,
@@ -57,6 +61,7 @@ pub struct Lexer {
 }
 
 impl Lexer {
+    /// Creates a new Lexer instance from an input string.
     pub fn new(input: &str) -> Self {
         Lexer {
             input: input.chars().collect(),
@@ -66,6 +71,7 @@ impl Lexer {
         }
     }
     
+    /// Tokenizes the input into a vector of tokens.
     pub fn tokenize(&mut self) -> Result<Vec<Token>, Box<dyn Error>> {
         let mut tokens = Vec::new();
         
@@ -73,23 +79,26 @@ impl Lexer {
             let c = self.current_char();
             
             match c {
-                ' ' | '\t' | '\r' => {
-                    self.advance();
-                },
+                // Whitespace characters
+                ' ' | '\t' | '\r' => self.advance(),
+
+                // Newline: increment line count
                 '\n' => {
                     self.line += 1;
                     self.column = 1;
                     self.advance();
-                },
-                '0'..='9' => {
-                    tokens.push(self.number()?);
-                },
-                'a'..='z' | 'A'..='Z' | '_' => {
-                    tokens.push(self.identifier()?);
-                },
-                '"' => {
-                    tokens.push(self.string_literal()?);
-                },
+                }
+
+                // Numeric literal
+                '0'..='9' => tokens.push(self.number()?),
+
+                // Identifier or keyword
+                'a'..='z' | 'A'..='Z' | '_' => tokens.push(self.identifier()?),
+
+                // String literal
+                '"' => tokens.push(self.string_literal()?),
+
+                // Operators
                 '+' => {
                     tokens.push(self.create_token(TokenType::Plus));
                     self.advance();
@@ -103,14 +112,14 @@ impl Lexer {
                     self.advance();
                 },
                 '/' => {
-                    // Check for comments
+                    // Handle comments
                     if self.peek() == '/' {
-                        self.advance(); // Skip first '/'
-                        self.advance(); // Skip second '/'
+                        self.advance();
+                        self.advance();
                         self.skip_line_comment();
                     } else if self.peek() == '*' {
-                        self.advance(); // Skip '/'
-                        self.advance(); // Skip '*'
+                        self.advance();
+                        self.advance();
                         self.skip_block_comment()?;
                     } else {
                         tokens.push(self.create_token(TokenType::Divide));
@@ -148,6 +157,8 @@ impl Lexer {
                     tokens.push(self.create_token(TokenType::GreaterThan));
                     self.advance();
                 },
+
+                // Punctuation
                 '(' => {
                     tokens.push(self.create_token(TokenType::LeftParen));
                     self.advance();
@@ -172,6 +183,8 @@ impl Lexer {
                     tokens.push(self.create_token(TokenType::Comma));
                     self.advance();
                 },
+
+                // Any other character is unexpected
                 _ => {
                     return Err(Box::new(LexerError {
                         message: format!("Unexpected character: {}", c),
@@ -182,7 +195,7 @@ impl Lexer {
             }
         }
         
-        // Add EOF token
+        // Add EOF token at the end
         tokens.push(Token {
             token_type: TokenType::EOF,
             line: self.line,
@@ -192,10 +205,12 @@ impl Lexer {
         Ok(tokens)
     }
     
+    /// Returns the current character.
     fn current_char(&self) -> char {
         self.input[self.position]
     }
     
+    /// Peeks ahead to the next character without advancing.
     fn peek(&self) -> char {
         if self.position + 1 >= self.input.len() {
             '\0'
@@ -204,11 +219,13 @@ impl Lexer {
         }
     }
     
+    /// Advances the lexer by one character.
     fn advance(&mut self) {
         self.position += 1;
         self.column += 1;
     }
     
+    /// Helper to create a token at the current position.
     fn create_token(&self, token_type: TokenType) -> Token {
         Token {
             token_type,
@@ -217,6 +234,7 @@ impl Lexer {
         }
     }
     
+    /// Parses a number (integer or float).
     fn number(&mut self) -> Result<Token, Box<dyn Error>> {
         let start_pos = self.position;
         let mut is_float = false;
@@ -263,6 +281,7 @@ impl Lexer {
         })
     }
     
+    /// Parses an identifier or keyword.
     fn identifier(&mut self) -> Result<Token, Box<dyn Error>> {
         let start_pos = self.position;
         
@@ -279,7 +298,7 @@ impl Lexer {
         let ident: String = self.input[start_pos..self.position].iter().collect();
         let column = self.column - ident.len();
         
-        // Check for keywords
+        // Check if it's a keyword
         let token_type = match ident.as_str() {
             "int" => TokenType::Int,
             "float" => TokenType::Float,
@@ -297,6 +316,7 @@ impl Lexer {
         })
     }
     
+    /// Parses a string literal.
     fn string_literal(&mut self) -> Result<Token, Box<dyn Error>> {
         self.advance(); // Skip opening quote
         let start_pos = self.position;
@@ -309,8 +329,8 @@ impl Lexer {
                     column: self.column,
                 }));
             }
-            
-            // Handle escape sequences if needed
+
+            // Handle escaped characters like \" or \n
             if self.current_char() == '\\' && self.position + 1 < self.input.len() {
                 self.advance(); // Skip backslash
             }
@@ -327,7 +347,7 @@ impl Lexer {
         }
         
         let string_content: String = self.input[start_pos..self.position].iter().collect();
-        let column = self.column - string_content.len() - 1; // -1 for opening quote
+        let column = self.column - string_content.len() - 1; // account for opening quote
         
         self.advance(); // Skip closing quote
         
@@ -338,12 +358,14 @@ impl Lexer {
         })
     }
     
+    /// Skips a single-line comment.
     fn skip_line_comment(&mut self) {
         while self.position < self.input.len() && self.current_char() != '\n' {
             self.advance();
         }
     }
     
+    /// Skips a block comment (/* ... */).
     fn skip_block_comment(&mut self) -> Result<(), Box<dyn Error>> {
         while self.position + 1 < self.input.len() {
             if self.current_char() == '*' && self.peek() == '/' {
